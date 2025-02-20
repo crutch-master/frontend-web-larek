@@ -35,6 +35,7 @@
 		"watch": "webpack --watch",
 		"start": "webpack serve",
 		"lint": "biome lint .",
-		"fmt": "biome format --write --fix ."
+		"fmt": "biome format --write --fix .",
+		"check": "tsc --noEmit"
 	}
 }

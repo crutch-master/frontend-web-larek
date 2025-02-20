@@ -15,7 +15,7 @@ const ProductList: (api: Api) => Component<State, Effect> = (api) => ({
 				});
 			})();
 
-			return;
+			return [];
 		}
 
 		return [];

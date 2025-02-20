@@ -54,7 +54,7 @@ export function cloneTemplate<T extends HTMLElement>(
 	query: string | HTMLTemplateElement,
 ): T {
 	const template = ensureElement(query) as HTMLTemplateElement;
-	return template.content.firstElementChild.cloneNode(true) as T;
+	return template.content.firstElementChild!.cloneNode(true) as T;
 }
 
 export function bem(

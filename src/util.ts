@@ -11,6 +11,16 @@ function render<S, M>(
 			? root
 			: root.querySelector(component.selector);
 
+	if (selected === null) {
+		throw new Error(
+			`failed to find html element ${
+				typeof component === "function"
+					? ""
+					: ` with selector: ${component.selector}`
+			}`,
+		);
+	}
+
 	const children =
 		typeof component === "function"
 			? component(state, emit)
