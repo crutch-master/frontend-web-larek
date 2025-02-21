@@ -43,7 +43,7 @@ export default class List<
 		}
 
 		return this.children.map(({ comp, elemId }) => {
-			if (!elem.querySelector(`#${elemId}`)) {
+			if (elem.querySelector(`#${elemId}`) === null) {
 				const childElem = cloneTemplate(this.templateQuery);
 				childElem.id = elemId;
 				elem.appendChild(childElem);

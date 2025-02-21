@@ -35,13 +35,16 @@ export class CartModal implements Component<State, Effect> {
 
 			new List(
 				({ id, selector }) =>
-					new Collection([
-						new ProductCard<State, Effect>(id, selector),
-						new Button<State, Effect>(
-							{ type: "remove-from-cart", id },
-							".basket__item-delete",
-						),
-					]),
+					new Collection(
+						[
+							new ProductCard<State, Effect>(id),
+							new Button<State, Effect>(
+								{ type: "remove-from-cart", id },
+								".basket__item-delete",
+							),
+						],
+						selector,
+					),
 
 				state.cart.map((id) => {
 					const elemId = `card-${id}`;
