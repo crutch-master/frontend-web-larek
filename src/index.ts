@@ -4,8 +4,7 @@ import { API_URL } from "./utils/constants";
 import { start } from "./runtime";
 import App from "./app";
 
-start(new App(), {
-	api: new Api(API_URL),
+start(new App(new Api(API_URL)), {
 	selectedModal: null,
 	products: {
 		items: [],

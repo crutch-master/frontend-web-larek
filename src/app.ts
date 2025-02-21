@@ -1,9 +1,16 @@
+import type { Api } from "./components/base/api";
 import ProductList from "./components/product-list";
 import ProductModal from "./components/product-modal";
 import type { State, Effect, App as IApp } from "./types";
 
 export default class App implements IApp<State, Effect> {
-	root = { render: () => [ProductList, ProductModal] };
+	readonly root;
+
+	constructor(api: Api) {
+		const comps = [new ProductList(api), ProductModal];
+
+		this.root = { render: () => comps };
+	}
 
 	update(state: State, eff: Effect): State {
 		switch (eff.type) {

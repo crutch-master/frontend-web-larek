@@ -1,19 +1,26 @@
 import type { State, Effect, Component, Product } from "../types";
 import { cloneTemplate } from "../utils/utils";
+import type { Api } from "./base/api";
 import Button from "./button";
 import ProductCard from "./product-card";
 
-const ProductList: Component<State, Effect> = {
-	selector: ".gallery",
+export default class ProductList implements Component<State, Effect> {
+	selector = ".gallery";
 
-	render(state, emit, elem) {
+	constructor(private readonly api: Api) {}
+
+	render(
+		state: State,
+		emit: (eff: Effect) => void,
+		elem: Element,
+	): Component<State, Effect>[] {
 		if (state.products.rendered) {
 			return [];
 		}
 
 		if (!state.products.fetched) {
 			(async () => {
-				const products = await state.api.get("/product");
+				const products = await this.api.get("/product");
 				emit({
 					type: "fetched",
 					items: (products as { items: Product[] }).items,
@@ -41,7 +48,5 @@ const ProductList: Component<State, Effect> = {
 				new Button({ type: "open-product-modal", id: item.id }, `#${id}`),
 			];
 		});
-	},
-};
-
-export default ProductList;
+	}
+}
