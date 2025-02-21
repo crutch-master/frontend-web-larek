@@ -27,12 +27,11 @@ export default class ProductList implements Component<State, Effect> {
 		}
 
 		return state.products.items.flatMap((item) => {
-			const id = `product-card-${item.id}`;
-			const selector = `#${id}`;
+			const selector = `#card-${item.id}`;
 
 			if (elem.querySelector(selector) === null) {
 				const card = cloneTemplate("#card-catalog");
-				card.id = id;
+				card.id = `card-${item.id}`;
 				elem.appendChild(card);
 			}
 

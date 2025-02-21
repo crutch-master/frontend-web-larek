@@ -1,24 +1,21 @@
 import type { Api } from "./components/base/api";
+import { CartButton } from "./components/cart-button";
+import { CartModal } from "./components/cart-modal";
+import Collection from "./components/collection";
 import ProductList from "./components/product-list";
 import ProductModal from "./components/product-modal";
-import type { State, Effect, App as IApp, Component } from "./types";
-
-class AppComponent implements Component<State, Effect> {
-	constructor(
-		private readonly list: ProductList,
-		private readonly productModal: ProductModal,
-	) {}
-
-	render(_state: State, _emit: (eff: Effect) => void, _elem: Element) {
-		return [this.list, this.productModal];
-	}
-}
+import type { State, Effect, App as IApp } from "./types";
 
 export default class App implements IApp<State, Effect> {
 	readonly root;
 
 	constructor(api: Api) {
-		this.root = new AppComponent(new ProductList(api), new ProductModal());
+		this.root = new Collection([
+			new ProductList(api),
+			new ProductModal(),
+			new CartModal(),
+			new CartButton(),
+		]);
 	}
 
 	update(state: State, eff: Effect): State {
@@ -51,6 +48,18 @@ export default class App implements IApp<State, Effect> {
 				return {
 					...state,
 					cart: state.cart.concat([eff.id]),
+				};
+
+			case "remove-from-cart":
+				return {
+					...state,
+					cart: state.cart.filter((id) => id !== eff.id),
+				};
+
+			case "open-cart-modal":
+				return {
+					...state,
+					selectedModal: { name: "cart" },
 				};
 		}
 	}

@@ -6,5 +6,8 @@ export type State = {
 		fetched: boolean;
 	};
 	cart: string[];
-	selectedModal: null | { name: "product-preview"; id: string };
+	selectedModal:
+		| null
+		| { name: "product-preview"; id: string }
+		| { name: "cart" };
 };

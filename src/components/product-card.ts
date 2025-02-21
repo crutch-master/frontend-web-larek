@@ -14,12 +14,19 @@ export default class ProductCard<
 	render(state: State, _: (eff: Effect) => void, elem: Element) {
 		const item = state.products.items.find(({ id }) => id === this.id)!;
 
-		elem.querySelector(".card__category")!.textContent = item.category;
 		elem.querySelector(".card__title")!.textContent = item.title;
 		elem.querySelector(".card__price")!.textContent =
 			item.price === null ? "Бесценно" : `${item.price} синапсов`;
-		(elem.querySelector(".card__image") as HTMLImageElement).src =
-			`${CDN_URL}${item.image}`;
+
+		const image = elem.querySelector(".card__image");
+		if (image !== null) {
+			(image as HTMLImageElement).src = `${CDN_URL}${item.image}`;
+		}
+
+		const category = elem.querySelector(".card__category");
+		if (category !== null) {
+			category.textContent = item.category;
+		}
 
 		return [];
 	}
