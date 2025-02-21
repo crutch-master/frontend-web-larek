@@ -2,7 +2,7 @@ import type { Api } from "./components/base/api";
 import { CartButton } from "./components/cart-button";
 import { CartModal } from "./components/cart-modal";
 import Collection from "./components/collection";
-import ProductList from "./components/product-list";
+import ProductGallery from "./components/product-gallery";
 import ProductModal from "./components/product-modal";
 import type { State, Effect, App as IApp } from "./types";
 
@@ -11,7 +11,7 @@ export default class App implements IApp<State, Effect> {
 
 	constructor(api: Api) {
 		this.root = new Collection([
-			new ProductList(api),
+			new ProductGallery(api),
 			new ProductModal(),
 			new CartModal(),
 			new CartButton(),
