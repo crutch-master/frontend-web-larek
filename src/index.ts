@@ -6,6 +6,7 @@ import App from "./app";
 
 start(App, {
 	api: new Api(API_URL),
+	selectedModal: null,
 	products: {
 		items: [],
 		fetched: false,

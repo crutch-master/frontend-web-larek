@@ -6,10 +6,9 @@ function render<S, E>(
 	state: S,
 	emit: (eff: E) => void,
 ) {
-	const selected =
-		typeof component === "function"
-			? root
-			: root.querySelector(component.selector);
+	const selected = component.selector
+		? root.querySelector(component.selector)
+		: root;
 
 	if (selected === null) {
 		throw new Error(
@@ -21,10 +20,7 @@ function render<S, E>(
 		);
 	}
 
-	const children =
-		typeof component === "function"
-			? component(state, emit)
-			: component.render(selected, state, emit);
+	const children = component.render(state, emit, selected);
 
 	for (const child of children) {
 		render(selected, child, state, emit);

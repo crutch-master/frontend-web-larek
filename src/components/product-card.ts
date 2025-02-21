@@ -1,10 +1,13 @@
-import type { Component, Effect, State } from "../types";
+import type { Component, Product } from "../types";
 import { CDN_URL } from "../utils/constants";
 
-const ProductCard: (id: string) => Component<State, Effect> = (id) => ({
-	selector: `#product-card-${id}`,
+const ProductCard: <State extends { products: { items: Product[] } }, Effect>(
+	id: string,
+	selector?: string,
+) => Component<State, Effect> = (id, selector = undefined) => ({
+	selector,
 
-	render(elem, state, _) {
+	render(state, _, elem) {
 		const item = state.products.items.find((product) => product.id === id)!;
 
 		elem.querySelector(".card__category")!.textContent = item.category;
