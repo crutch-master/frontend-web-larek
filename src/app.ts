@@ -1,9 +1,11 @@
 import ProductList from "./components/product-list";
 import ProductModal from "./components/product-modal";
-import type { State, Effect, App as A } from "./types";
+import type { State, Effect, App as IApp } from "./types";
 
-const App: A<State, Effect> = {
-	update(state, eff) {
+export default class App implements IApp<State, Effect> {
+	root = { render: () => [ProductList, ProductModal] };
+
+	update(state: State, eff: Effect): State {
 		switch (eff.type) {
 			case "fetched":
 				return {
@@ -39,9 +41,5 @@ const App: A<State, Effect> = {
 					},
 				};
 		}
-	},
-
-	root: { render: () => [ProductList, ProductModal] },
-};
-
-export default App;
+	}
+}

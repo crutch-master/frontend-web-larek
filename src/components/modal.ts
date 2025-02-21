@@ -1,15 +1,15 @@
 import type { Component } from "../types";
 import Button from "./button";
 
-const Modal: <State, Effect>(
-	shown: boolean,
-	close: Effect,
-	selector?: string,
-) => Component<State, Effect> = (shown, close, selector = undefined) => ({
-	selector,
+export default class Modal<State, Effect> implements Component<State, Effect> {
+	constructor(
+		private readonly shown: boolean,
+		private readonly close: Effect,
+		readonly selector?: string,
+	) {}
 
-	render(_, emit, elem) {
-		if (shown) {
+	render(_: State, emit: (eff: Effect) => void, elem: Element) {
+		if (this.shown) {
 			elem.classList.add("modal_active");
 		} else {
 			elem.classList.remove("modal_active");
@@ -17,12 +17,10 @@ const Modal: <State, Effect>(
 
 		(elem as HTMLDivElement).onclick = (evt) => {
 			if (evt.target === elem) {
-				emit(close);
+				emit(this.close);
 			}
 		};
 
-		return [Button(close, ".modal__close")];
-	},
-});
-
-export default Modal;
+		return [new Button(this.close, ".modal__close")];
+	}
+}

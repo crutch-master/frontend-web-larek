@@ -1,15 +1,13 @@
 import type { Component } from "../types";
 
-const Button: <State, Effect>(
-	onClick: Effect,
-	selector: string | undefined,
-) => Component<State, Effect> = (onClick, selector = undefined) => ({
-	selector,
+export default class Button<State, Effect> implements Component<State, Effect> {
+	constructor(
+		private readonly onClick: Effect,
+		readonly selector?: string,
+	) {}
 
-	render(_, emit, elem) {
-		(elem as HTMLButtonElement).onclick = () => emit(onClick);
+	render(_: State, emit: (eff: Effect) => void, elem: Element) {
+		(elem as HTMLButtonElement).onclick = () => emit(this.onClick);
 		return [];
-	},
-});
-
-export default Button;
+	}
+}

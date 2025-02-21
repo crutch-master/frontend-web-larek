@@ -37,8 +37,8 @@ const ProductList: Component<State, Effect> = {
 			elem.appendChild(card);
 
 			return [
-				ProductCard(item.id, `#${id}`),
-				Button({ type: "open-product-modal", id: item.id }, `#${id}`),
+				new ProductCard(item.id, `#${id}`),
+				new Button({ type: "open-product-modal", id: item.id }, `#${id}`),
 			];
 		});
 	},

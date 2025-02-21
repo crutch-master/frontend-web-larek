@@ -1,14 +1,18 @@
 import type { Component, Product } from "../types";
 import { CDN_URL } from "../utils/constants";
 
-const ProductCard: <State extends { products: { items: Product[] } }, Effect>(
-	id: string,
-	selector?: string,
-) => Component<State, Effect> = (id, selector = undefined) => ({
-	selector,
+export default class ProductCard<
+	State extends { products: { items: Product[] } },
+	Effect,
+> implements Component<State, Effect>
+{
+	constructor(
+		private readonly id: string,
+		readonly selector?: string,
+	) {}
 
-	render(state, _, elem) {
-		const item = state.products.items.find((product) => product.id === id)!;
+	render(state: State, _: (eff: Effect) => void, elem: Element) {
+		const item = state.products.items.find(({ id }) => id === this.id)!;
 
 		elem.querySelector(".card__category")!.textContent = item.category;
 		elem.querySelector(".card__title")!.textContent = item.title;
@@ -18,7 +22,5 @@ const ProductCard: <State extends { products: { items: Product[] } }, Effect>(
 			`${CDN_URL}${item.image}`;
 
 		return [];
-	},
-});
-
-export default ProductCard;
+	}
+}

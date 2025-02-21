@@ -7,12 +7,12 @@ const ProductModal: Component<State, Effect> = {
 
 	render(state) {
 		if (state.selectedModal?.name !== "product-preview") {
-			return [Modal(false, { type: "close-modal" })];
+			return [new Modal(false, { type: "close-modal" })];
 		}
 
 		return [
-			ProductCard(state.selectedModal.id),
-			Modal(true, { type: "close-modal" }),
+			new ProductCard<State, Effect>(state.selectedModal.id),
+			new Modal<State, Effect>(true, { type: "close-modal" }),
 		];
 	},
 };
