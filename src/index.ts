@@ -9,6 +9,5 @@ start(new App(new Api(API_URL)), {
 	products: {
 		items: [],
 		fetched: false,
-		rendered: false,
 	},
 });

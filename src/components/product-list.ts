@@ -14,10 +14,6 @@ export default class ProductList implements Component<State, Effect> {
 		emit: (eff: Effect) => void,
 		elem: Element,
 	): Component<State, Effect>[] {
-		if (state.products.rendered) {
-			return [];
-		}
-
 		if (!state.products.fetched) {
 			(async () => {
 				const products = await this.api.get("/product");
@@ -30,22 +26,19 @@ export default class ProductList implements Component<State, Effect> {
 			return [];
 		}
 
-		emit({ type: "products-rendered" });
-
-		while (elem.lastChild) {
-			elem.removeChild(elem.lastChild);
-		}
-
 		return state.products.items.flatMap((item) => {
 			const id = `product-card-${item.id}`;
-			const card = cloneTemplate("#card-catalog");
+			const selector = `#${id}`;
 
-			card.id = id;
-			elem.appendChild(card);
+			if (elem.querySelector(selector) === null) {
+				const card = cloneTemplate("#card-catalog");
+				card.id = id;
+				elem.appendChild(card);
+			}
 
 			return [
-				new ProductCard(item.id, `#${id}`),
-				new Button({ type: "open-product-modal", id: item.id }, `#${id}`),
+				new ProductCard(item.id, selector),
+				new Button({ type: "open-product-modal", id: item.id }, selector),
 			];
 		});
 	}
