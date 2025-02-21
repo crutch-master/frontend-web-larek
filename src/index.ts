@@ -6,6 +6,7 @@ import App from "./app";
 
 start(new App(new Api(API_URL)), {
 	selectedModal: null,
+	cart: [],
 	products: {
 		items: [],
 		fetched: false,

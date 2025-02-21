@@ -7,6 +7,7 @@ export default class Button<State, Effect> implements Component<State, Effect> {
 	) {}
 
 	render(_: State, emit: (eff: Effect) => void, elem: Element) {
+		elem.removeAttribute("disabled");
 		(elem as HTMLButtonElement).onclick = () => emit(this.onClick);
 		return [];
 	}

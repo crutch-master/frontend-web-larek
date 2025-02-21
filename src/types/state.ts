@@ -5,5 +5,6 @@ export type State = {
 		items: Product[];
 		fetched: boolean;
 	};
+	cart: string[];
 	selectedModal: null | { name: "product-preview"; id: string };
 };

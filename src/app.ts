@@ -46,6 +46,12 @@ export default class App implements IApp<State, Effect> {
 						id: eff.id,
 					},
 				};
+
+			case "add-to-cart":
+				return {
+					...state,
+					cart: state.cart.concat([eff.id]),
+				};
 		}
 	}
 }

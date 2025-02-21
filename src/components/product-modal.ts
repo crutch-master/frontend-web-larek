@@ -1,4 +1,6 @@
 import type { Component, State, Effect } from "../types";
+import Button from "./button";
+import DisabledButton from "./disabled-button";
 import Modal from "./modal";
 import ProductCard from "./product-card";
 
@@ -14,9 +16,19 @@ export default class ProductModal implements Component<State, Effect> {
 			return [new Modal(false, { type: "close-modal" })];
 		}
 
+		const id = state.selectedModal.id;
+		const isInCart = state.cart.includes(id);
+
 		return [
-			new ProductCard<State, Effect>(state.selectedModal.id),
-			new Modal<State, Effect>(true, { type: "close-modal" }),
+			new ProductCard(state.selectedModal.id),
+			new Modal(true, { type: "close-modal" }),
+
+			isInCart
+				? new DisabledButton(".button")
+				: new Button(
+						{ type: "add-to-cart", id: state.selectedModal.id },
+						".button",
+					),
 		];
 	}
 }
