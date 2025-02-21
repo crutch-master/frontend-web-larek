@@ -1,4 +1,5 @@
 import type { Component, State, Effect } from "../types";
+import { calcTotal, formatPrice } from "../utils/price";
 import Button from "./button";
 import Collection from "./collection";
 import List from "./list";
@@ -17,21 +18,23 @@ export class CartModal implements Component<State, Effect> {
 			return [new Modal(false, { type: "close-modal" })];
 		}
 
-		const total = state.cart.reduce(
-			(total, id) => {
-				const found =
-					state.products.items.find((item) => item.id === id)?.price ?? null;
-
-				return found !== null && total !== null ? found + total : null;
-			},
-			0 as number | null,
+		elem.querySelector(".basket__price")!.textContent = formatPrice(
+			calcTotal(state.products.items, state.cart),
 		);
-
-		elem.querySelector(".basket__price")!.textContent =
-			total === null ? "Бесценно" : `${total} синапсов`;
 
 		return [
 			new Modal(true, { type: "close-modal" }),
+
+			new Collection(
+				[
+					new Button(
+						{ type: "open-address-modal" },
+						".button",
+						state.cart.length > 0,
+					),
+				],
+				".modal__actions",
+			),
 
 			new List(
 				({ id, selector }) =>

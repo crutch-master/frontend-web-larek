@@ -9,5 +9,8 @@ export type State = {
 	selectedModal:
 		| null
 		| { name: "product-preview"; id: string }
-		| { name: "cart" };
+		| { name: "cart" }
+		| { name: "address"; payment: "online" | "on-receive" }
+		| { name: "payment" }
+		| { name: "complete" };
 };

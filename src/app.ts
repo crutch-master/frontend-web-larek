@@ -1,7 +1,10 @@
+import AddressModal from "./components/address-modal";
 import type { Api } from "./components/base/api";
 import { CartButton } from "./components/cart-button";
 import { CartModal } from "./components/cart-modal";
 import Collection from "./components/collection";
+import DoneModal from "./components/done-modal";
+import PaymentModal from "./components/payment-modal";
 import ProductGallery from "./components/product-gallery";
 import ProductModal from "./components/product-modal";
 import type { State, Effect, App as IApp } from "./types";
@@ -15,6 +18,9 @@ export default class App implements IApp<State, Effect> {
 			new ProductModal(),
 			new CartModal(),
 			new CartButton(),
+			new AddressModal(),
+			new PaymentModal(),
+			new DoneModal(),
 		]);
 	}
 
@@ -60,6 +66,38 @@ export default class App implements IApp<State, Effect> {
 				return {
 					...state,
 					selectedModal: { name: "cart" },
+				};
+
+			case "open-address-modal":
+				return {
+					...state,
+					selectedModal: {
+						name: "address",
+						payment:
+							eff.payment ??
+							(state.selectedModal?.name === "address"
+								? state.selectedModal.payment
+								: "online"),
+					},
+				};
+
+			case "open-payment-modal":
+				return {
+					...state,
+					selectedModal: { name: "payment" },
+				};
+
+			case "open-done-modal":
+				return {
+					...state,
+					selectedModal: { name: "complete" },
+				};
+
+			case "close-done-modal":
+				return {
+					...state,
+					cart: [],
+					selectedModal: null,
 				};
 		}
 	}

@@ -1,5 +1,6 @@
 import type { Component, Product } from "../types";
 import { CDN_URL } from "../utils/constants";
+import { formatPrice } from "../utils/price";
 
 export default class ProductCard<
 	State extends { products: { items: Product[] } },
@@ -15,8 +16,7 @@ export default class ProductCard<
 		const item = state.products.items.find(({ id }) => id === this.id)!;
 
 		elem.querySelector(".card__title")!.textContent = item.title;
-		elem.querySelector(".card__price")!.textContent =
-			item.price === null ? "Бесценно" : `${item.price} синапсов`;
+		elem.querySelector(".card__price")!.textContent = formatPrice(item.price);
 
 		const image = elem.querySelector(".card__image");
 		if (image !== null) {
