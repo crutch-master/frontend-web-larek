@@ -98,4 +98,5 @@ export interface App<State, Effect> {
 Для визуализации данной архитектуры также существует наглядная диаграмма. На ней widgets эквивалентна компонентам, а interactions эффектам.
 
 ![](https://book.iced.rs/resources/the-gui-trinity.svg)
+
 *Диаграмма взята из [документации](https://book.iced.rs/architecture.html) [iced.rs](https://iced.rs)*
