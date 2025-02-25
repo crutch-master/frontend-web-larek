@@ -99,4 +99,4 @@ export interface App<State, Effect> {
 
 ![](https://book.iced.rs/resources/the-gui-trinity.svg)
 
-*Диаграмма взята из [документации](https://book.iced.rs/architecture.html) [iced.rs](https://iced.rs)*
+*Диаграмма взята из [документации](https://book.iced.rs/architecture.html) библиотеки [iced.rs](https://iced.rs)*
