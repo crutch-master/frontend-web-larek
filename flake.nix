@@ -11,7 +11,7 @@
     pkgs = nixpkgs.legacyPackages.${system};
   in {
     devShell.${system} = pkgs.mkShell {
-      packages = with pkgs; [bun];
+      packages = with pkgs; [bun nodejs];
     };
   };
 }
