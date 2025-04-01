@@ -28,7 +28,7 @@ export class CartModal implements Component<State, Effect> {
 			new Collection(
 				[
 					new Button(
-						{ type: "open-address-modal" },
+						{ type: "open-address-modal", email: "", payment: "online" },
 						".button",
 						state.cart.length > 0,
 					),

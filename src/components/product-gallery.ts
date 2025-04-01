@@ -1,5 +1,5 @@
-import type { State, Effect, Component, Product } from "../types";
-import type { Api } from "./base/api";
+import type { State, Effect, Component } from "../types";
+import type { ILarekAPI } from "./base/api";
 import Button from "./button";
 import Collection from "./collection";
 import List from "./list";
@@ -8,7 +8,7 @@ import ProductCard from "./product-card";
 export default class ProductGallery implements Component<State, Effect> {
 	selector = ".gallery";
 
-	constructor(private readonly api: Api) {}
+	constructor(private readonly api: ILarekAPI) {}
 
 	render(
 		state: State,
@@ -17,10 +17,10 @@ export default class ProductGallery implements Component<State, Effect> {
 	): Component<State, Effect>[] {
 		if (!state.products.fetched) {
 			(async () => {
-				const products = await this.api.get("/product");
+				const items = await this.api.fetchProducts();
 				emit({
 					type: "fetched",
-					items: (products as { items: Product[] }).items,
+					items,
 				});
 			})();
 

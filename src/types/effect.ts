@@ -1,4 +1,4 @@
-import type { Product } from ".";
+import type { FormState, Product } from ".";
 
 export type Effect =
 	| { type: "fetched"; items: Product[] }
@@ -7,7 +7,10 @@ export type Effect =
 	| { type: "add-to-cart"; id: string }
 	| { type: "remove-from-cart"; id: string }
 	| { type: "open-cart-modal" }
-	| { type: "open-address-modal"; payment?: "online" | "on-receive" }
-	| { type: "open-payment-modal" }
-	| { type: "open-done-modal" }
+	| ({ type: "open-address-modal" } & Partial<
+			Pick<FormState, "address" | "payment">
+	  >)
+	| ({ type: "open-payment-modal" } & Partial<FormState>)
+	| ({ type: "open-done-modal" } & Partial<FormState>)
+	| { type: "order-completed" }
 	| { type: "close-done-modal" };

@@ -21,12 +21,14 @@ export default class AddressModal implements Component<State, Effect> {
 		) as HTMLButtonElement;
 
 		const [active, inactive] =
-			state.selectedModal.payment === "online"
+			state.form.payment === "online"
 				? [onlineBtn, onRecvBtn]
 				: [onRecvBtn, onlineBtn];
 
 		active.classList.remove("button_alt");
 		inactive.classList.add("button_alt");
+
+		const addrInput = elem.querySelector("#address-input") as HTMLInputElement;
 
 		return [
 			new Button(
@@ -34,14 +36,14 @@ export default class AddressModal implements Component<State, Effect> {
 				"#select-online",
 			),
 			new Button(
-				{ type: "open-address-modal", payment: "on-receive" },
+				{ type: "open-address-modal", payment: "in-person" },
 				"#select-on-receive",
 			),
 			new FormModal(
 				true,
 				{ type: "close-modal" },
-				{ type: "open-payment-modal" },
-				{ type: "open-address-modal" },
+				{ type: "open-payment-modal", address: addrInput.value },
+				{ type: "open-address-modal", address: addrInput.value },
 				".form",
 			),
 		];

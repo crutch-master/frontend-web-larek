@@ -1,5 +1,5 @@
 import AddressModal from "./components/address-modal";
-import type { Api } from "./components/base/api";
+import type { ILarekAPI } from "./components/base/api";
 import { CartButton } from "./components/cart-button";
 import { CartModal } from "./components/cart-modal";
 import Collection from "./components/collection";
@@ -12,7 +12,7 @@ import type { State, Effect, App as IApp } from "./types";
 export default class App implements IApp<State, Effect> {
 	readonly root;
 
-	constructor(api: Api) {
+	constructor(api: ILarekAPI) {
 		this.root = new Collection([
 			new ProductGallery(api),
 			new ProductModal(),
@@ -20,11 +20,13 @@ export default class App implements IApp<State, Effect> {
 			new CartButton(),
 			new AddressModal(),
 			new PaymentModal(),
-			new DoneModal(),
+			new DoneModal(api),
 		]);
 	}
 
 	update(state: State, eff: Effect): State {
+		console.log(eff);
+
 		switch (eff.type) {
 			case "fetched":
 				return {
@@ -71,26 +73,46 @@ export default class App implements IApp<State, Effect> {
 			case "open-address-modal":
 				return {
 					...state,
+					form: {
+						...state.form,
+						payment: eff.payment ?? state.form.payment,
+						address: eff.address ?? state.form.address,
+					},
 					selectedModal: {
 						name: "address",
-						payment:
-							eff.payment ??
-							(state.selectedModal?.name === "address"
-								? state.selectedModal.payment
-								: "online"),
 					},
 				};
 
 			case "open-payment-modal":
 				return {
 					...state,
-					selectedModal: { name: "payment" },
+					form: {
+						phone: eff.phone ?? state.form.phone,
+						email: eff.email ?? state.form.email,
+						address: eff.address ?? state.form.address,
+						payment: eff.payment ?? state.form.payment,
+					},
+					selectedModal: {
+						name: "payment",
+					},
 				};
 
 			case "open-done-modal":
 				return {
 					...state,
-					selectedModal: { name: "complete" },
+					form: {
+						phone: eff.phone ?? state.form.phone,
+						email: eff.email ?? state.form.email,
+						address: eff.address ?? state.form.address,
+						payment: eff.payment ?? state.form.payment,
+					},
+					selectedModal: { name: "complete", complete: false },
+				};
+
+			case "order-completed":
+				return {
+					...state,
+					selectedModal: { name: "complete", complete: true },
 				};
 
 			case "close-done-modal":
