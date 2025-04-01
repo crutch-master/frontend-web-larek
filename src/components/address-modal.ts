@@ -4,48 +4,71 @@ import FormModal from "./form-modal";
 import Modal from "./modal";
 
 export default class AddressModal implements Component<State, Effect> {
-	readonly selector = "#address-modal";
+	private readonly selectOnline: HTMLButtonElement;
+	private readonly selectOnRecv: HTMLButtonElement;
+	private readonly addrInput: HTMLInputElement;
 
-	render(
-		state: State,
-		_: (eff: Effect) => void,
-		elem: Element,
-	): Component<State, Effect>[] {
-		if (state.selectedModal?.name !== "address") {
-			return [new Modal(false, { type: "close-modal" })];
-		}
+	private readonly selectOnlineBtn: Button<State, Effect>;
+	private readonly selectOnRecvBtn: Button<State, Effect>;
+	private readonly form: FormModal<State, Effect>;
 
-		const onlineBtn = elem.querySelector("#select-online") as HTMLButtonElement;
-		const onRecvBtn = elem.querySelector(
+	constructor(elem: HTMLElement) {
+		this.selectOnline = elem.querySelector(
+			"#select-online",
+		) as HTMLButtonElement;
+
+		this.selectOnlineBtn = new Button(this.selectOnline, {
+			type: "open-address-modal",
+			payment: "online",
+		});
+
+		this.selectOnRecv = elem.querySelector(
 			"#select-on-receive",
 		) as HTMLButtonElement;
 
+		this.selectOnRecvBtn = new Button(this.selectOnRecv, {
+			type: "open-address-modal",
+			payment: "in-person",
+		});
+
+		this.addrInput = elem.querySelector("#address-input") as HTMLInputElement;
+
+		this.form = new FormModal(
+			elem,
+			elem.querySelector(".form")!,
+			{ type: "close-modal" },
+			{ type: "open-payment-modal", payment: "online", address: "" },
+			{ type: "open-address-modal", payment: "online" },
+		);
+	}
+
+	render(state: State, _: (eff: Effect) => void): Component<State, Effect>[] {
+		if (state.selectedModal?.name !== "address") {
+			this.form.shown = false;
+			return [this.form];
+		}
+
 		const [active, inactive] =
 			state.form.payment === "online"
-				? [onlineBtn, onRecvBtn]
-				: [onRecvBtn, onlineBtn];
+				? [this.selectOnline, this.selectOnRecv]
+				: [this.selectOnRecv, this.selectOnline];
 
 		active.classList.remove("button_alt");
 		inactive.classList.add("button_alt");
 
-		const addrInput = elem.querySelector("#address-input") as HTMLInputElement;
+		this.form.shown = true;
 
-		return [
-			new Button(
-				{ type: "open-address-modal", payment: "online" },
-				"#select-online",
-			),
-			new Button(
-				{ type: "open-address-modal", payment: "in-person" },
-				"#select-on-receive",
-			),
-			new FormModal(
-				true,
-				{ type: "close-modal" },
-				{ type: "open-payment-modal", address: addrInput.value },
-				{ type: "open-address-modal", address: addrInput.value },
-				".form",
-			),
-		];
+		this.form.click = {
+			type: "open-payment-modal",
+			payment: state.form.payment,
+			address: this.addrInput.value,
+		};
+
+		this.form.update = {
+			type: "open-address-modal",
+			payment: state.form.payment,
+		};
+
+		return [this.selectOnlineBtn, this.selectOnRecvBtn, this.form];
 	}
 }

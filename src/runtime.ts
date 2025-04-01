@@ -1,37 +1,18 @@
 import type { App, Component } from "./types";
 
 function render<S, E>(
-	root: Element,
 	component: Component<S, E>,
 	state: S,
 	emit: (eff: E) => void,
 ) {
-	const selected = component.selector
-		? root.querySelector(component.selector)
-		: root;
-
-	if (selected === null) {
-		throw new Error(
-			`failed to find html element ${
-				typeof component === "function"
-					? ""
-					: ` with selector: ${component.selector}`
-			}`,
-		);
-	}
-
-	const children = component.render(state, emit, selected);
+	const children = component.render(state, emit);
 
 	for (const child of children) {
-		render(selected, child, state, emit);
+		render(child, state, emit);
 	}
 }
 
-export function start<S, E>(
-	app: App<S, E>,
-	initial: S,
-	root: Element = document.body,
-) {
+export function start<S, E>(app: App<S, E>, initial: S) {
 	let state = initial;
 	let queuedRerender = false;
 
@@ -59,12 +40,12 @@ export function start<S, E>(
 		if (!queuedRerender) {
 			queueMicrotask(() => {
 				queuedRerender = false;
-				render(root, app.root, state, emit);
+				render(app.root, state, emit);
 			});
 
 			queuedRerender = true;
 		}
 	};
 
-	render(root, app.root, state, emit);
+	render(app.root, state, emit);
 }

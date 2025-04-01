@@ -7,10 +7,8 @@ export type Effect =
 	| { type: "add-to-cart"; id: string }
 	| { type: "remove-from-cart"; id: string }
 	| { type: "open-cart-modal" }
-	| ({ type: "open-address-modal" } & Partial<
-			Pick<FormState, "address" | "payment">
-	  >)
-	| ({ type: "open-payment-modal" } & Partial<FormState>)
-	| ({ type: "open-done-modal" } & Partial<FormState>)
+	| ({ type: "open-address-modal" } & Pick<FormState, "payment">)
+	| ({ type: "open-payment-modal" } & Pick<FormState, "payment" | "address">)
+	| ({ type: "open-done-modal" } & FormState)
 	| { type: "order-completed" }
 	| { type: "close-done-modal" };

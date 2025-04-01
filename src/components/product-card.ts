@@ -7,25 +7,33 @@ export default class ProductCard<
 	Effect,
 > implements Component<State, Effect>
 {
-	constructor(
-		private readonly id: string,
-		readonly selector?: string,
-	) {}
+	private readonly titleElem: HTMLElement;
+	private readonly priceElem: HTMLElement;
+	private readonly imageElem: HTMLElement | null;
+	private readonly categoryElem: HTMLElement | null;
 
-	render(state: State, _: (eff: Effect) => void, elem: Element) {
+	constructor(
+		elem: HTMLElement,
+		public id: string,
+	) {
+		this.titleElem = elem.querySelector(".card__title")!;
+		this.priceElem = elem.querySelector(".card__price")!;
+		this.imageElem = elem.querySelector(".card__image");
+		this.categoryElem = elem.querySelector(".card__category");
+	}
+
+	render(state: State, _: (eff: Effect) => void) {
 		const item = state.products.items.find(({ id }) => id === this.id)!;
 
-		elem.querySelector(".card__title")!.textContent = item.title;
-		elem.querySelector(".card__price")!.textContent = formatPrice(item.price);
+		this.titleElem.textContent = item.title;
+		this.priceElem.textContent = formatPrice(item.price);
 
-		const image = elem.querySelector(".card__image");
-		if (image !== null) {
-			(image as HTMLImageElement).src = `${CDN_URL}${item.image}`;
+		if (this.imageElem !== null) {
+			(this.imageElem as HTMLImageElement).src = `${CDN_URL}${item.image}`;
 		}
 
-		const category = elem.querySelector(".card__category");
-		if (category !== null) {
-			category.textContent = item.category;
+		if (this.categoryElem !== null) {
+			this.categoryElem.textContent = item.category;
 		}
 
 		return [];

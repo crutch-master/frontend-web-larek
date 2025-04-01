@@ -14,19 +14,17 @@ export default class App implements IApp<State, Effect> {
 
 	constructor(api: ILarekAPI) {
 		this.root = new Collection([
-			new ProductGallery(api),
-			new ProductModal(),
-			new CartModal(),
-			new CartButton(),
-			new AddressModal(),
-			new PaymentModal(),
-			new DoneModal(api),
+			new ProductGallery(document.querySelector(".gallery")!, api),
+			new ProductModal(document.querySelector("#product-modal")!),
+			new CartModal(document.querySelector("#cart-modal")!),
+			new CartButton(document.querySelector(".header__basket")!),
+			new AddressModal(document.querySelector("#address-modal")!),
+			new PaymentModal(document.querySelector("#payment-modal")!),
+			new DoneModal(document.querySelector("#done-modal")!, api),
 		]);
 	}
 
 	update(state: State, eff: Effect): State {
-		console.log(eff);
-
 		switch (eff.type) {
 			case "fetched":
 				return {
@@ -75,8 +73,7 @@ export default class App implements IApp<State, Effect> {
 					...state,
 					form: {
 						...state.form,
-						payment: eff.payment ?? state.form.payment,
-						address: eff.address ?? state.form.address,
+						payment: eff.payment,
 					},
 					selectedModal: {
 						name: "address",
@@ -87,10 +84,9 @@ export default class App implements IApp<State, Effect> {
 				return {
 					...state,
 					form: {
-						phone: eff.phone ?? state.form.phone,
-						email: eff.email ?? state.form.email,
-						address: eff.address ?? state.form.address,
-						payment: eff.payment ?? state.form.payment,
+						...state.form,
+						address: eff.address,
+						payment: eff.payment,
 					},
 					selectedModal: {
 						name: "payment",
@@ -101,10 +97,10 @@ export default class App implements IApp<State, Effect> {
 				return {
 					...state,
 					form: {
-						phone: eff.phone ?? state.form.phone,
-						email: eff.email ?? state.form.email,
-						address: eff.address ?? state.form.address,
-						payment: eff.payment ?? state.form.payment,
+						phone: eff.phone,
+						email: eff.email,
+						address: eff.address,
+						payment: eff.payment,
 					},
 					selectedModal: { name: "complete", complete: false },
 				};

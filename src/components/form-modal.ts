@@ -1,31 +1,32 @@
 import type { Component } from "../types";
 import Button from "./button";
-import Collection from "./collection";
 import Modal from "./modal";
 
 export default class FormModal<State, Effect>
 	implements Component<State, Effect>
 {
+	private readonly modal: Modal<State, Effect>;
+	private readonly submitBtn: Button<State, Effect>;
+
 	constructor(
-		private readonly shown: boolean,
-		private readonly close: Effect,
-		private readonly click: Effect,
-		private readonly update: Effect,
-		private readonly formSelector: string,
-		readonly selector?: string,
-	) {}
+		modalElem: HTMLElement,
+		private readonly formElem: HTMLFormElement,
+		close: Effect,
+		public click: Effect,
+		public update: Effect,
+		public shown = false,
+	) {
+		this.modal = new Modal(modalElem, close, shown);
+		this.submitBtn = new Button(
+			formElem.querySelector(".modal__actions")!.querySelector(".button")!,
+			click,
+		);
+	}
 
-	render(
-		_: State,
-		emit: (eff: Effect) => void,
-		elem: Element,
-	): Component<State, Effect>[] {
-		const form = elem.querySelector(this.formSelector) as HTMLFormElement;
-		form.onsubmit = (e) => e.preventDefault();
-
+	render(_: State, emit: (eff: Effect) => void): Component<State, Effect>[] {
 		let isFilled = true;
 
-		for (const elem of form.elements) {
+		for (const elem of this.formElem.elements) {
 			if (elem.tagName !== "INPUT") {
 				continue;
 			}
@@ -38,12 +39,12 @@ export default class FormModal<State, Effect>
 			}
 		}
 
-		return [
-			new Modal(this.shown, this.close),
-			new Collection(
-				[new Button(this.click, ".button", isFilled)],
-				".modal__actions",
-			),
-		];
+		this.formElem.onsubmit = (e) => e.preventDefault();
+
+		this.modal.shown = this.shown;
+		this.submitBtn.enabled = isFilled;
+		this.submitBtn.onClick = this.click;
+
+		return [this.modal, this.submitBtn];
 	}
 }

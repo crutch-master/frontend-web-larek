@@ -2,25 +2,29 @@ import type { Component } from "../types";
 import Button from "./button";
 
 export default class Modal<State, Effect> implements Component<State, Effect> {
-	constructor(
-		private readonly shown: boolean,
-		private readonly close: Effect,
-		readonly selector?: string,
-	) {}
+	private readonly closeBtn: Button<State, Effect>;
 
-	render(_: State, emit: (eff: Effect) => void, elem: Element) {
+	constructor(
+		private readonly elem: Element,
+		private readonly close: Effect,
+		public shown = false,
+	) {
+		this.closeBtn = new Button(elem.querySelector(".modal__close")!, close);
+	}
+
+	render(_: State, emit: (eff: Effect) => void) {
 		if (this.shown) {
-			elem.classList.add("modal_active");
+			this.elem.classList.add("modal_active");
 		} else {
-			elem.classList.remove("modal_active");
+			this.elem.classList.remove("modal_active");
 		}
 
-		(elem as HTMLDivElement).onclick = (evt) => {
-			if (evt.target === elem) {
+		(this.elem as HTMLDivElement).onclick = (evt) => {
+			if (evt.target === this.elem) {
 				emit(this.close);
 			}
 		};
 
-		return [new Button(this.close, ".modal__close")];
+		return [this.closeBtn];
 	}
 }

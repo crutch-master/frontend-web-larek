@@ -1,4 +1,4 @@
-import type { State, Effect, Component } from "../types";
+import type { State, Effect, Component, Product } from "../types";
 import type { ILarekAPI } from "./base/api";
 import Button from "./button";
 import Collection from "./collection";
@@ -6,14 +6,35 @@ import List from "./list";
 import ProductCard from "./product-card";
 
 export default class ProductGallery implements Component<State, Effect> {
-	selector = ".gallery";
+	private readonly list: List<
+		State,
+		Effect,
+		{ product: Product; selector: string }
+	>;
 
-	constructor(private readonly api: ILarekAPI) {}
+	constructor(
+		elem: HTMLElement,
+		private readonly api: ILarekAPI,
+	) {
+		this.list = new List(
+			elem,
+
+			({ product, selector }) =>
+				new Collection([
+					new ProductCard(elem.querySelector(selector)!, product.id),
+					new Button(elem.querySelector(selector)!, {
+						type: "open-product-modal",
+						id: product.id,
+					}),
+				]),
+
+			"#card-catalog",
+		);
+	}
 
 	render(
 		state: State,
 		emit: (eff: Effect) => void,
-		_: Element,
 	): Component<State, Effect>[] {
 		if (!state.products.fetched) {
 			(async () => {
@@ -27,24 +48,11 @@ export default class ProductGallery implements Component<State, Effect> {
 			return [];
 		}
 
-		return [
-			new List(
-				({ product, selector }) =>
-					new Collection([
-						new ProductCard(product.id, selector),
-						new Button(
-							{ type: "open-product-modal", id: product.id },
-							selector,
-						),
-					]),
+		this.list.collection = state.products.items.map((product) => {
+			const elemId = `card-${product.id}`;
+			return { arg: { product, selector: `#${elemId}` }, elemId };
+		});
 
-				state.products.items.map((product) => {
-					const elemId = `card-${product.id}`;
-					return { arg: { product, selector: `#${elemId}` }, elemId };
-				}),
-
-				"#card-catalog",
-			),
-		];
+		return [this.list];
 	}
 }

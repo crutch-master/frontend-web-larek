@@ -5,19 +5,32 @@ import Button from "./button";
 import Modal from "./modal";
 
 export default class DoneModal implements Component<State, Effect> {
-	readonly selector = "#done-modal";
+	private readonly total: HTMLElement;
+	private readonly modal: Modal<State, Effect>;
+	private readonly closeBtn: Button<State, Effect>;
 
-	constructor(private readonly api: ILarekAPI) {}
+	constructor(
+		elem: HTMLElement,
+		private readonly api: ILarekAPI,
+	) {
+		this.total = elem.querySelector(".film__description")!;
+
+		this.modal = new Modal(elem, {
+			type: "close-done-modal",
+		});
+
+		this.closeBtn = new Button(elem.querySelector(".order-success__close")!, {
+			type: "close-done-modal",
+		});
+	}
 
 	render(
 		state: State,
 		emit: (eff: Effect) => void,
-		elem: Element,
 	): Component<State, Effect>[] {
 		if (state.selectedModal?.name === "complete") {
-			const total = elem.querySelector(".film__description") as HTMLElement;
 			if (state.selectedModal.complete) {
-				total.textContent = `Списано ${formatPrice(calcTotal(state.products.items, state.cart))}`;
+				this.total.textContent = `Списано ${formatPrice(calcTotal(state.products.items, state.cart))}`;
 			} else {
 				(async () => {
 					await this.api.sendOrder(
@@ -31,15 +44,12 @@ export default class DoneModal implements Component<State, Effect> {
 					emit({ type: "order-completed" });
 				})();
 
-				total.textContent = "Оплачиваем...";
+				this.total.textContent = "Оплачиваем...";
 			}
 		}
 
-		return [
-			new Modal(state.selectedModal?.name === "complete", {
-				type: "close-done-modal",
-			}),
-			new Button({ type: "close-done-modal" }, ".order-success__close"),
-		];
+		this.modal.shown = state.selectedModal?.name === "complete";
+
+		return [this.modal, this.closeBtn];
 	}
 }

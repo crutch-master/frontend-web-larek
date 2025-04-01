@@ -2,18 +2,18 @@ import type { Component } from "../types";
 
 export default class Button<State, Effect> implements Component<State, Effect> {
 	constructor(
-		private readonly onClick: Effect,
-		readonly selector?: string,
-		private readonly enabled: boolean = true,
+		private readonly elem: HTMLElement,
+		public onClick: Effect,
+		public enabled = true,
 	) {}
 
-	render(_: State, emit: (eff: Effect) => void, elem: Element) {
+	render(_: State, emit: (eff: Effect) => void) {
 		if (this.enabled) {
-			elem.removeAttribute("disabled");
-			(elem as HTMLButtonElement).onclick = () => emit(this.onClick);
+			this.elem.removeAttribute("disabled");
+			(this.elem as HTMLButtonElement).onclick = () => emit(this.onClick);
 		} else {
-			elem.setAttribute("disabled", "");
-			(elem as HTMLButtonElement).onclick = null;
+			this.elem.setAttribute("disabled", "");
+			(this.elem as HTMLButtonElement).onclick = null;
 		}
 
 		return [];

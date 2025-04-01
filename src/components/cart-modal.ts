@@ -7,56 +7,59 @@ import Modal from "./modal";
 import ProductCard from "./product-card";
 
 export class CartModal implements Component<State, Effect> {
-	selector = "#cart-modal";
+	private readonly modal: Modal<State, Effect>;
+	private readonly priceElem: HTMLElement;
+	private readonly nextBtn: Button<State, Effect>;
+	private readonly list: List<State, Effect, { id: string; selector: string }>;
 
-	render(
-		state: State,
-		_: (eff: Effect) => void,
-		elem: Element,
-	): Component<State, Effect>[] {
-		if (state.selectedModal?.name !== "cart") {
-			return [new Modal(false, { type: "close-modal" })];
-		}
+	constructor(elem: HTMLElement) {
+		this.modal = new Modal(elem, { type: "close-modal" });
 
-		elem.querySelector(".basket__price")!.textContent = formatPrice(
-			calcTotal(state.products.items, state.cart),
+		this.priceElem = elem.querySelector(".basket__price")!;
+
+		this.nextBtn = new Button(
+			elem.querySelector(".modal__actions")!.querySelector(".button")!,
+			{ type: "open-address-modal", payment: "online" },
+			false,
 		);
 
-		return [
-			new Modal(true, { type: "close-modal" }),
+		this.list = new List(
+			elem.querySelector(".basket__list")!,
 
-			new Collection(
-				[
-					new Button(
-						{ type: "open-address-modal", email: "", payment: "online" },
-						".button",
-						state.cart.length > 0,
+			({ id, selector }) =>
+				new Collection([
+					new ProductCard<State, Effect>(elem.querySelector(selector)!, id),
+					new Button<State, Effect>(
+						elem
+							.querySelector(selector)!
+							.querySelector(".basket__item-delete")!,
+						{
+							type: "remove-from-cart",
+							id,
+						},
 					),
-				],
-				".modal__actions",
-			),
+				]),
 
-			new List(
-				({ id, selector }) =>
-					new Collection(
-						[
-							new ProductCard<State, Effect>(id),
-							new Button<State, Effect>(
-								{ type: "remove-from-cart", id },
-								".basket__item-delete",
-							),
-						],
-						selector,
-					),
+			"#card-basket",
+		);
+	}
 
-				state.cart.map((id) => {
-					const elemId = `card-${id}`;
-					return { arg: { id, selector: `#${elemId}` }, elemId };
-				}),
+	render(state: State, _: (eff: Effect) => void): Component<State, Effect>[] {
+		if (state.selectedModal?.name !== "cart") {
+			this.modal.shown = false;
+			return [this.modal];
+		}
 
-				"#card-basket",
-				".basket__list",
-			),
-		];
+		this.priceElem.textContent = formatPrice(
+			calcTotal(state.products.items, state.cart),
+		);
+		this.modal.shown = true;
+		this.nextBtn.enabled = state.cart.length > 0;
+		this.list.collection = state.cart.map((id) => {
+			const elemId = `card-${id}`;
+			return { arg: { id, selector: `#${elemId}` }, elemId };
+		});
+
+		return [this.modal, this.nextBtn, this.list];
 	}
 }

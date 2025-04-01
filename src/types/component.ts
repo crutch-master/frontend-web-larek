@@ -1,11 +1,5 @@
 export interface Component<State, Effect> {
-	readonly selector?: string;
-
-	render(
-		state: State,
-		emit: (eff: Effect) => void,
-		elem: Element,
-	): Component<State, Effect>[];
+	render(state: State, emit: (eff: Effect) => void): Component<State, Effect>[];
 }
 
 export interface App<State, Effect> {
