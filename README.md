@@ -38,19 +38,27 @@ bun build
 
 Состояние приложения, на основе которого отображается интерфейс. Важно, что состояние в этом случае оно глобальное на все приложение. В нашем случае состояние приложения описывается следующим типом:
 ```ts
+export type FormState = {
+	payment: "online" | "in-person";
+	address: string;
+	phone: string;
+	email: string;
+};
+
 export type State = {
 	products: {
 		items: Product[];
 		fetched: boolean;
 	};
 	cart: string[];
+	form: FormState;
 	selectedModal:
 		| null
 		| { name: "product-preview"; id: string }
 		| { name: "cart" }
-		| { name: "address"; payment: "online" | "on-receive" }
+		| { name: "address" }
 		| { name: "payment" }
-		| { name: "complete" };
+		| { name: "complete"; complete: boolean };
 };
 ```
 
@@ -72,13 +80,7 @@ export type Product = {
 Концептуально компонент это функция `f :: state -> ui`. Единственной задачей компонента является отрисовка на основе состояния. Компонент не может напрямую влиять на состояние, благодаря чему код значительно легче воспринимаеть и отлаживать. В нашем случае для удобства работы с селекторами компонент описывается интерфейсом, а не просто функцией:
 ```ts
 export interface Component<State, Effect> {
-	readonly selector?: string;
-
-	render(
-		state: State,
-		emit: (eff: Effect) => void,
-		elem: Element,
-	): Component<State, Effect>[];
+	render(state: State, emit: (eff: Effect) => void): Component<State, Effect>[];
 }
 ```
 
@@ -93,9 +95,10 @@ export type Effect =
 	| { type: "add-to-cart"; id: string }
 	| { type: "remove-from-cart"; id: string }
 	| { type: "open-cart-modal" }
-	| { type: "open-address-modal"; payment?: "online" | "on-receive" }
-	| { type: "open-payment-modal" }
-	| { type: "open-done-modal" }
+	| ({ type: "open-address-modal" } & Pick<FormState, "payment">)
+	| ({ type: "open-payment-modal" } & Pick<FormState, "payment" | "address">)
+	| ({ type: "open-done-modal" } & FormState)
+	| { type: "order-completed" }
 	| { type: "close-done-modal" };
 ```
 
