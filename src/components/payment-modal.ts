@@ -1,3 +1,4 @@
+import phone from "phone";
 import type { Component, State, Effect } from "../types";
 import FormModal from "./form-modal";
 
@@ -34,13 +35,17 @@ export default class PaymentModal implements Component<State, Effect> {
 			payment: state.form.payment,
 		};
 
-		this.form.click = {
-			type: "open-done-modal",
-			address: state.form.address,
-			payment: state.form.payment,
-			email: this.emailInput.value,
-			phone: this.phoneInput.value,
-		};
+		if (!phone(this.phoneInput.value).isValid) {
+			this.form.click = this.form.update;
+		} else {
+			this.form.click = {
+				type: "open-done-modal",
+				address: state.form.address,
+				payment: state.form.payment,
+				email: this.emailInput.value,
+				phone: this.phoneInput.value,
+			};
+		}
 
 		return [this.form];
 	}

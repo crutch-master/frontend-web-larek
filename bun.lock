@@ -3,6 +3,9 @@
   "workspaces": {
     "": {
       "name": "my-webpack-project",
+      "dependencies": {
+        "phone": "^3.1.58",
+      },
       "devDependencies": {
         "@babel/core": "^7.21.5",
         "@babel/preset-env": "^7.21.5",
@@ -1139,6 +1142,8 @@
     "path-to-regexp": ["path-to-regexp@0.1.7", "", {}, ""],
 
     "path-type": ["path-type@4.0.0", "", {}, ""],
+
+    "phone": ["phone@3.1.58", "", {}, "sha512-4R4qfXxNPpl08fxOH0qvTXTodQue0nCnAQP0OIu2i59TDq4QXM0dq/b7ODPNH93setqK5YdMSiMuce0RPsgu4w=="],
 
     "picocolors": ["picocolors@1.0.0", "", {}, ""],
 
